@@ -153,14 +153,14 @@ public class Quickstart {
             log.info("Sorry, you aren't allowed to drive the 'eagle5' winnebago!");
         }
 
-        // true:被认证了
+        // true:登出前是被认证的
         System.out.println("---> " + currentUser.isAuthenticated());
 
         //all done - log out!
         // 执行登出:调用Subject.Logout()方法
         currentUser.logout();
 
-        // false:登出后未被认证
+        // false:登出后是未被认证的
         System.out.println("---> " + currentUser.isAuthenticated());
 
         System.exit(0);
