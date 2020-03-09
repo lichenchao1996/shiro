@@ -108,6 +108,11 @@
          6.2 登录页面login.jsp
      -->
     <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+    <!-- 若与web.xml中的<filter-name>不一致,则会抛出NoSuchBeanDefinitionException异常
+         (org.springframework.beans.factory.NoSuchBeanDefinitionException: No bean named 'shiroFilter' is defined)
+         原因:Shiro会到IOC容器中查找和<filter-name>名字对应的filter bean
+     -->
+    <!--<bean id="shiroFilter2" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">-->
         <property name="securityManager" ref="securityManager"/>
         <!-- 登录页面 -->
         <property name="loginUrl" value="/login.jsp"/>
@@ -130,15 +135,30 @@
          -->
         <property name="filterChainDefinitions">
             <value>
+                <!-- 格式:url = 拦截器[参数]
+                     anon(anonymous):匿名访问(即不需要登录即可访问)
+                     authc(authentication):需要身份认证后才能访问
+                 -->
+                <!-- 顺序:url权限采取第一次匹配优先的方式,即从头开始使用第一个匹配的url模式对应的拦截器链
+                     Ant风格
+                     ?:匹配一个字符 /admin?  /admin1 √  /admin/ ×
+                     *:匹配0个或多个字符串  /admin*  /admin √ /admin1 √  /admin/1 ×
+                     **:匹配路径中的0个或多个路径  /admin/**  /admin/1 √ /admin/1/2 √
+                 -->
                 <!--/favicon.ico = anon
                 /logo.png = anon
                 /shiro.css = anon
                 /s/login = anon
                 /*.jar = anon-->
                 # allow WebStart to pull the jars for the swing app:
-                login.jsp = anon
+                /login.jsp = anon
+                <!--/user* = authc-->
+                /list.jsp = anon
                 # everything else requires authentication:
+                <!-- 拦截所有url -->
                 /** = authc
+                <!--/list.jsp = anon-->
+                <!--/user.jsp = authc-->
             </value>
         </property>
     </bean>
